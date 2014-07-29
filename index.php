@@ -22,7 +22,7 @@
 			$(document).on("click", "button", function() {
 				
 				$.ajax({
-					dataType: "xml",
+					dataType: "json",
 					//url: "process.php",
 					//data: {url: url},
 					url: url,

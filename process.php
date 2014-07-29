@@ -23,16 +23,16 @@
 	// set content-type
 	header("Content-Type: text/xml");
 	
+	// close cURL session
 	curl_close($curl);
+
+	// convert xml to json format
+	$xmlString = simplexml_load_string($xml);
+	$json = json_encode($xmlString);
 	
-	//echo $xml;
-	//var_dump($xml);
+	//var_dump($data);
 	//die();
 	
-	$xmlString = simplexml_load_string($xml);
-	$json = json_encode($xml);
-	$data = json_decode($json, TRUE);
-	
-	//echo $xml;
-
+	// send to front end
+	echo $json;
 ?>
