@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cars>
+	<car company="TOYOTA">
+		<product>Prius</product>	
+		<colors>
+			<color>white pearl</color>
+			<color>Red Methalic</color>			
+			<color>Silver Methalic</color>						
+		</colors>
+		<type>Gen-3</type>
+	</car>
+	<car company="TOYOTA">
+		<product>New Fortuner</product>	
+		<colors>
+			<color>super white</color>
+			<color>Black</color>			
+			<color>Silver</color>						
+		</colors>
+		<type>Fortuner TRD Sportivo Limited Edition</type>
+	</car>	
+</cars>
