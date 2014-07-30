@@ -1,20 +1,27 @@
 angular.module("medicalStudiesApp", [])
-/*
+
 	.factory("clinicalTrialsFactory", function($http) {
 		return {
-			getStudies: function(doc) {
-				$http.get()
-				
-				
-				.success(doc){
-					console.log(doc);
-				}
+			getStudies: function(url) {
+				return $http({
+						method: "GET",
+						url: url,
+						responseType: "json"
+					});
+/*					
+					.success(function(data) {
+						//console.log(data.clinical_study);
+						return data;
+					})
+					.error(function() {
+						console.log("error");
+					});
+*/ 
 			}
 		};
-
 	})
-*/
-	.controller("mainCtrl", function($scope, $http) {
+
+	.controller("mainCtrl", function($scope, $http, clinicalTrialsFactory) {
 		
 		$scope.fetchResults = function() {
 
@@ -36,6 +43,17 @@ angular.module("medicalStudiesApp", [])
 			
 			console.log(url);
 			
+			clinicalTrialsFactory.getStudies(url)
+				.success(function(data) {
+					$scope.results = data.clinical_study;
+					//console.log($scope.results);
+				})
+				.error(function(data) {
+					console.log("Error retrieving clinical studies");
+				});
+
+			
+/*			
 			$http({
 				method: "GET",
 				url: url,
@@ -47,7 +65,7 @@ angular.module("medicalStudiesApp", [])
 			.error(function() {
 				console.log("error");
 			});
-			
+*/	
 		}
 		
 	});
