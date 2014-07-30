@@ -1,0 +1,33 @@
+<!doctype html>
+<html ng-app="medicalStudiesApp">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=1">
+	<meta http-equiv="Content-Type" charset="utf-8">
+	<title>zephyr health | assignment</title>
+	
+	<!-- css links -->
+	<!-- <link rel="stylesheet" href="libs/reset.css" /> <!-- meyer reset -->
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+<body ng-controller="mainCtrl">
+	<header>
+		<h2>clinical trials</h2>
+	</header>
+	
+	<main>	
+		<!-- search & filter -->
+		<p>Please input search topics</p>
+		<input id="searchTopic" type="search" placeholder="search studies" ng-model="searchTopic" />
+		<p>Input between 0 - 100 results</p>
+		<input id="resultsCount" type="number" min="0" max="100" pattern="\d+" ng-model="resultsCount" />
+		<button ng-click="fetchResults();">get results!</button>
+	</main>
+	<footer>
+		<!-- load js files -->
+		<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+		<script src="js/app.js"></script>
+		<!--<script src="js/jquery.js"></script>-->
+	</footer>
+</body>
+</html>

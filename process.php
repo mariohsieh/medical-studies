@@ -10,6 +10,23 @@
 	//var_dump($url);
 	//die();
 	
+	// declare variables
+	//$data = [];
+		
+	$url .= "&displayxml=".$_GET['displayxml'];
+	//var_dump($url);
+	//die();	
+	
+	if (isset($_GET['term']))
+		$temp = str_replace(" ", "+", $_GET['term']);
+		$url .= "&term=".$temp;
+		
+	if (isset($_GET['count']))
+		$url .= "&count=".$_GET['count'];
+		
+	//var_dump($url);
+	//die();
+	
 	// open cUR session
 	$curl = curl_init($url);
 	
@@ -30,7 +47,7 @@
 	$xmlString = simplexml_load_string($xml);
 	$json = json_encode($xmlString);
 	
-	//var_dump($data);
+	//var_dump($json);
 	//die();
 	
 	// send to front end
