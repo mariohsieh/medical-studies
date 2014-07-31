@@ -4,6 +4,40 @@ $(document).ready(function() {
 	var url = "http://localhost/projects/zephyr-health/process.php?path=";
 	var path = "ct2/results?term=&Search=Search&displayxml=true";
 
+	//// set global values for highcharts ////
+	Highcharts.setOptions({
+		chart: {
+			type: 'column'
+		},
+		title: {
+			text: 'Status Chart'
+		},
+		subtitle: {
+			text: 'Source: clinicaltrials.gov'
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: '# of Studies'
+			}
+		},
+		xAxis: {
+			//categories: arr[0],
+			title: {
+				text: null
+			}
+		},
+		legend: {
+			layout: 'vertical',
+			align: 'center',
+			verticalAlign: 'bottom',
+			x: 0,
+			y: 0,
+			floating: false,
+			borderWidth: 1
+		}
+	});
+
 	//// helper functions ////
 	function fetchResults() {
 		var searchTopic = $("#searchTopic").val().trim();
@@ -21,8 +55,8 @@ $(document).ready(function() {
 			path += path+resultsCount;
 		}
 
-		console.log(path);
-
+		//console.log(path);
+		
 		$.ajax({
 			dataType: "json",
 			url: url+encodeURIComponent(path),
@@ -32,12 +66,47 @@ $(document).ready(function() {
 			success: function(data) {
 				displayStudies(data);
 			}				
-		});			
+		});
 	}
 
+	// organizes chart options, creates chart and appends to the DOM for display
 	function displayStudies(info) {
 		console.log(info);
+
+		// call function to determine categories and values
+		var chart1Data = chart1GetData(info);
 		
+		// call function to set options for new chart
+		//var opts = createChart(chartData);
+		var chart1 = new Highcharts.Chart({
+			chart: {
+				renderTo: 'charts'
+			},
+			xAxis: {
+				categories: chart1Data[0]
+			},
+			series: [{
+				data: chart1Data[1],
+				name: 'Status'
+			}],
+			plotOptions: {
+				series: {
+					cursor: 'pointer',
+					point: {
+						events: {
+							click: function() {
+								chart2GetData(this.category);
+							}
+						}
+					}
+				}
+			},			
+		});
+	}
+
+	// find the categories for X-axis and respective values for first chart
+	function chart1GetData(info) {
+		// create empty arrays to hold category & value
 		var catNames = [];
 		var catValues = [];
 		
@@ -45,7 +114,7 @@ $(document).ready(function() {
 
 		// find all the categories from results
 		for (item in items) {
-			console.log(items[item].status);
+			//console.log(items[item].status);
 			
 			if (catNames.length != 0) {
 				for (var i=0;i<catNames.length;i++) {
@@ -67,55 +136,22 @@ $(document).ready(function() {
 			}
 		}
 		
-		console.log(catNames);
-		console.log(catValues);
-		
-		var options = {
-			chart: {
-				type: 'column'
-			},
-			title: {
-				text: 'Status Chart'
-			},
-			subtitle: {
-				text: 'Source: clinicaltrials.gov'
-			},
-			yAxis: {
-				min: 0,
-				title: {
-					text: '# of Studies'
-				}
-			},
-			xAxis: {
-				categories: catNames,
-				title: {
-					text: null
-				}
-			},
-			legend: {
-				layout: 'vertical',
-				align: 'center',
-				verticalAlign: 'bottom',
-				x: 0,
-				y: 0,
-				floating: false,
-				borderWidth: 1
-			},
-			series: [{
-				name: 'Status',
-				data: catValues
-			}]
-		};
-		
-		// append options to make charts
-		$("#charts").highcharts(options);		
+		return [catNames,catValues];		
 	}
 	
+	function chart2GetData(category) {
+		console.log(category);
+	}
 	
 	//// event listeners ////
 	$(document).on("click", "button", function() {
 		fetchResults();
 	});
+	
+	$(document).on("click", ".highcharts-container", function() {
+		console.log('hi');
+	});
+	
 });
 
 
