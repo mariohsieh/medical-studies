@@ -4,6 +4,8 @@ $(document).ready(function() {
 	var url = "http://localhost/projects/zephyr-health/process.php?path=";
 	var path = "ct2/results?term=&Search=Search&displayxml=true";
 
+	var allData = {};	// declare empty to hold all data fetched
+
 	//// set global values for highcharts ////
 	Highcharts.setOptions({
 		chart: {
@@ -64,23 +66,24 @@ $(document).ready(function() {
 				console.log("Error in accessing studies.");
 			},
 			success: function(data) {
-				displayStudies(data);
+				displayChart1(data);
 			}				
 		});
 	}
 
 	// organizes chart options, creates chart and appends to the DOM for display
-	function displayStudies(info) {
-		console.log(info);
+	function displayChart1(info) {
+		allData = info;
+		console.log(allData);
 
 		// call function to determine categories and values
 		var chart1Data = chart1GetData(info);
 		
-		// call function to set options for new chart
-		//var opts = createChart(chartData);
+		// create instance of Highcharts and render to DOM
+		$("#charts").append("<div id='chart1'></div>");
 		var chart1 = new Highcharts.Chart({
 			chart: {
-				renderTo: 'charts'
+				renderTo: 'chart1'
 			},
 			xAxis: {
 				categories: chart1Data[0]
@@ -95,13 +98,50 @@ $(document).ready(function() {
 					point: {
 						events: {
 							click: function() {
-								chart2GetData(this.category);
+								displayChart2(this.category);
+								//var chart2Data = chart2GetData(this.category);
+								
 							}
 						}
 					}
 				}
 			},			
-		});
+		});	
+	}
+
+	function displayChart2(str) {
+		var cat = str;
+		
+		var chart2Data = chart2GetData(cat);
+		
+		console.log(chart2Data);
+
+		// create instance of Highcharts and render to DOM
+		$("#charts").append("<div id='chart2'></div>");
+		var chart2 = new Highcharts.Chart({
+			chart: {
+				renderTo: 'chart2'
+			},
+			xAxis: {
+				categories: chart2Data[0]
+			},
+			series: [{
+				data: chart2Data[1],
+				name: 'Status'
+			}],
+			plotOptions: {
+				series: {
+					cursor: 'pointer',
+					point: {
+						events: {
+							click: function() {
+								console.log('hi');
+							}
+						}
+					}
+				}
+			},			
+		});			
 	}
 
 	// find the categories for X-axis and respective values for first chart
@@ -114,8 +154,7 @@ $(document).ready(function() {
 
 		// find all the categories from results
 		for (item in items) {
-			//console.log(items[item].status);
-			
+			//console.log(items[item].status);	
 			if (catNames.length != 0) {
 				for (var i=0;i<catNames.length;i++) {
 					if (items[item].status == catNames[i])
@@ -138,9 +177,54 @@ $(document).ready(function() {
 		
 		return [catNames,catValues];		
 	}
-	
+
+	// find the categories for X-axis and respective values for second chart	
 	function chart2GetData(category) {
-		console.log(category);
+		
+		// declare empty arrays to hold categories and values
+		var catNames = [],
+			tempNames = [], 
+			catValues = [];
+		
+		var items = allData.clinical_study;
+
+		// loop through all results
+		for (item in items) {	
+			if (category == items[item].status) {
+				//console.log(items[item].condition_summary);
+				var bar = items[item].condition_summary.split(";");
+				for (foo in bar)
+					tempNames.push(bar[foo].trim());
+			}
+		}
+		
+		tempNames.sort();
+		console.log(tempNames);
+		
+		var length = tempNames.length;
+		catNames.push(tempNames[0]);
+		
+		for (var i=1;i<length;i++) {
+			if (tempNames[i-1] != tempNames[i])
+				catNames.push(tempNames[i]); 
+		}
+		
+		
+		
+		console.log(catNames);
+
+		
+		// find all values for each categories
+		for (var i=0;i<catNames.length;i++) {
+			catValues[i] = 0;
+			for (var j=0;j<tempNames.length;j++) {
+				if (tempNames[j] == catNames[i])
+					catValues[i]++;
+			}
+		}
+		
+		console.log(catValues);
+		return [catNames, catValues];		
 	}
 	
 	//// event listeners ////
