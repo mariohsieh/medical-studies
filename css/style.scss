@@ -1,9 +1,23 @@
+html, body {
+	font-family: 'Ubuntu Mono', monospace;
+	font-size: 100%;
+}
+
+header {
+	background-color: #000;
+	color: #fff;
+	text-align: center;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.5em;
+}
+
+
 // remove the arrows within input of type numbers
 input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 }
 
 #charts {
-	width: 75%;
-	height: 400px;
+	width: 100%;
 }

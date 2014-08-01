@@ -120,9 +120,13 @@ $(document).ready(function() {
 		$("#charts").append("<div id='chart2'></div>");
 		var chart2 = new Highcharts.Chart({
 			chart: {
-				renderTo: 'chart2'
+				renderTo: 'chart2',
+				height: 800
 			},
 			xAxis: {
+				labels: {
+					rotation: -60
+				},
 				categories: chart2Data[0]
 			},
 			series: [{
@@ -135,7 +139,7 @@ $(document).ready(function() {
 					point: {
 						events: {
 							click: function() {
-								console.log('hi');
+								console.log(this.category);
 							}
 						}
 					}
