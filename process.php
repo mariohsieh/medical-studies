@@ -22,7 +22,7 @@
 		$url .= "&count=".$_GET['count'];
 */
 		
-	// open cUR session
+	// open cURL session
 	$curl = curl_init($url);
 	
 	// don't return http headers but do return contents of the call

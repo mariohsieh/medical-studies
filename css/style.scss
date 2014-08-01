@@ -12,6 +12,9 @@ header {
 	font-size: 1.5em;
 }
 
+main {
+	margin: 0 15px;
+}
 
 // remove the arrows within input of type numbers
 input::-webkit-inner-spin-button {
@@ -20,4 +23,9 @@ input::-webkit-inner-spin-button {
 
 #charts {
 	width: 100%;
+	
+	th {
+		background-color: #000;
+		color: #fff;
+	}
 }

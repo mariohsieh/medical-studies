@@ -1,10 +1,42 @@
 $(document).ready(function() {
 			
 	// declare url and path for proxy server
-	var url = "http://localhost/projects/zephyr-health/process.php?path=";
+	var url = "process.php?path=";
 	var path = "ct2/results?term=&Search=Search&displayxml=true";
 
-	var allData = {};	// declare empty to hold all data fetched
+	var allData = {};	// declare empty objects to hold all data fetched
+	var filteredData = {};
+
+	//// helper functions ////
+	function fetchResults() {
+		var searchTopic = $("#searchTopic").val().trim();
+		
+		// if user inputs search items
+		if (searchTopic != '') {
+			searchTopic = searchTopic.split(" ").join("+");
+			path = "ct2/results?term="+searchTopic+"&Search=Search&displayxml=true";
+		}
+					
+		// if user inputs results number
+		var resultsCount = $("#resultsCount").val().trim();
+		if (resultsCount != '') {
+			resultsCount = "&count="+resultsCount.toString();
+			path += path+resultsCount;
+		}
+
+		//console.log(path);
+		
+		$.ajax({
+			dataType: "json",
+			url: url+encodeURIComponent(path),
+			error: function() {
+				console.log("Error in accessing studies.");
+			},
+			success: function(data) {
+				displayChart1(data);
+			}				
+		});
+	}
 
 	//// set global values for highcharts ////
 	Highcharts.setOptions({
@@ -40,37 +72,8 @@ $(document).ready(function() {
 		}
 	});
 
-	//// helper functions ////
-	function fetchResults() {
-		var searchTopic = $("#searchTopic").val().trim();
-		
-		// if user inputs search items
-		if (searchTopic != '') {
-			searchTopic = searchTopic.split(" ").join("+");
-			path = "ct2/results?term="+searchTopic+"&Search=Search&displayxml=true";
-		}
-					
-		// if user inputs results number
-		var resultsCount = $("#resultsCount").val().trim();
-		if (resultsCount != '') {
-			resultsCount = "&count="+resultsCount.toString();
-			path += path+resultsCount;
-		}
 
-		//console.log(path);
-		
-		$.ajax({
-			dataType: "json",
-			url: url+encodeURIComponent(path),
-			error: function() {
-				console.log("Error in accessing studies.");
-			},
-			success: function(data) {
-				displayChart1(data);
-			}				
-		});
-	}
-
+	//// display functions for highcharts and tables ////
 	// organizes chart options, creates chart and appends to the DOM for display
 	function displayChart1(info) {
 		allData = info;
@@ -98,9 +101,7 @@ $(document).ready(function() {
 					point: {
 						events: {
 							click: function() {
-								displayChart2(this.category);
-								//var chart2Data = chart2GetData(this.category);
-								
+								displayChart2(this.category);	
 							}
 						}
 					}
@@ -109,10 +110,16 @@ $(document).ready(function() {
 		});	
 	}
 
+	// organizes chart options, creates chart and appends to the DOM for display
 	function displayChart2(str) {
+		$("#chart2").remove();
+		$("#table3").remove();
+		
 		var cat = str;
 		
 		var chart2Data = chart2GetData(cat);
+
+		filteredData = chart2Data[2];
 		
 		console.log(chart2Data);
 
@@ -139,7 +146,8 @@ $(document).ready(function() {
 					point: {
 						events: {
 							click: function() {
-								console.log(this.category);
+								displayTable(this.category);
+								//console.log(this.category);
 							}
 						}
 					}
@@ -148,7 +156,46 @@ $(document).ready(function() {
 		});			
 	}
 
-	// find the categories for X-axis and respective values for first chart
+	// outputs data for table
+	function displayTable(str) {
+		$("#table3").remove();
+		
+		var condition = str;
+		
+		var tableInfo = getTableData(condition);
+		console.log(tableInfo);
+		
+		$("#charts").append("<div id='table3'></div>");
+		
+		var tableHeader = "<table><thead><tr>";
+		tableHeader += "<th>Title</th>";
+		tableHeader += "<th>URL</th>";
+		tableHeader += "<th>Conditions</th>";
+		tableHeader += "<th>Status</th>";
+		tableHeader += "<th>Score</th>";
+		tableHeader += "<th>Last Changed</th>";
+		tableHeader += "</tr></thead><tbody>";
+		
+		var tableContent = "";
+		for (data in tableInfo) { 
+			tableContent += "<tr><td data-tooltip='"+tableInfo[data].title+"'>"+tableInfo[data].title.slice(0,10)+"...</td>";
+			tableContent += "<td><a target='_blank' href='"+tableInfo[data].url+"'>..."+tableInfo[data].url.slice(-11)+"</td>";
+			tableContent += "<td>"+tableInfo[data].condition_summary+"</td>";
+			tableContent += "<td>"+tableInfo[data].status+"</td>";
+			tableContent += "<td>"+tableInfo[data].score+"</td>";
+			tableContent += "<td>"+tableInfo[data].last_changed+"</td></tr>";
+		}
+		
+		tableContent += "</tr>";
+		
+		tableFooter = "</tbody></table>";	
+		
+		$("#table3").html(tableHeader+tableContent+tableFooter);
+	}
+	
+	
+	//// calculate the categores and values for charts/tables ////
+	// for chart1
 	function chart1GetData(info) {
 		// create empty arrays to hold category & value
 		var catNames = [];
@@ -179,22 +226,24 @@ $(document).ready(function() {
 			}
 		}
 		
-		return [catNames,catValues];		
+		return [catNames,catValues];
 	}
 
-	// find the categories for X-axis and respective values for second chart	
+	// for chart2	
 	function chart2GetData(category) {
 		
 		// declare empty arrays to hold categories and values
 		var catNames = [],
 			tempNames = [], 
-			catValues = [];
-		
+			catValues = [],
+			results = [];
+
 		var items = allData.clinical_study;
 
 		// loop through all results
 		for (item in items) {	
 			if (category == items[item].status) {
+				results.push(items[item]);
 				//console.log(items[item].condition_summary);
 				var bar = items[item].condition_summary.split(";");
 				for (foo in bar)
@@ -202,8 +251,10 @@ $(document).ready(function() {
 			}
 		}
 		
+		
 		tempNames.sort();
 		console.log(tempNames);
+		console.log(tempNames.length);
 		
 		var length = tempNames.length;
 		catNames.push(tempNames[0]);
@@ -213,11 +264,9 @@ $(document).ready(function() {
 				catNames.push(tempNames[i]); 
 		}
 		
-		
-		
 		console.log(catNames);
+		console.log(catNames.length);
 
-		
 		// find all values for each categories
 		for (var i=0;i<catNames.length;i++) {
 			catValues[i] = 0;
@@ -228,11 +277,37 @@ $(document).ready(function() {
 		}
 		
 		console.log(catValues);
-		return [catNames, catValues];		
+		return [catNames, catValues, results];
 	}
+	
+	// for last table
+	function getTableData(str) {
+		
+		var data = filteredData;
+		console.log(data);
+		
+		// create empty array to hold related studies
+		var tableStudies = [];
+		
+		// create an array of studies with matching condition
+		for (study in data) {
+			var issues = data[study].condition_summary.split(";");
+			for (issue in issues) {
+				//console.log(issues[issue].trim());
+				if (issues[issue].trim() == str) {
+					//console.log(issues[issue].trim());
+					tableStudies.push(data[study]);
+				}
+			}
+		}
+		
+		return tableStudies;
+	}
+	
 	
 	//// event listeners ////
 	$(document).on("click", "button", function() {
+		$("#charts").empty();
 		fetchResults();
 	});
 	
