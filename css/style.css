@@ -11,13 +11,33 @@ header {
   font-size: 1.5em; }
 
 main {
-  margin: 0 15px; }
+  margin: 0 15px 20px; }
+
+a {
+  text-decoration: none;
+  color: #7cb5ec; }
+
+a:hover {
+  color: #95ceff; }
 
 input::-webkit-inner-spin-button {
   -webkit-appearance: none; }
 
+.center {
+  margin: 0 auto; }
+
+.textCenter {
+  text-align: center; }
+
 #charts {
   width: 100%; }
   #charts th {
+    background-color: #000;
+    color: #fff; }
+  #charts th, #charts td {
+    padding: 5px 10px; }
+  #charts tr > td:first-of-type:hover::after {
+    position: absolute;
+    content: attr(data-tooltip);
     background-color: #000;
     color: #fff; }

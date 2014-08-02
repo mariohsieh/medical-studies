@@ -1,3 +1,7 @@
+$grey: #707070;
+$lightBlue: #7cb5ec;
+$hoverBlue: #95ceff;
+
 html, body {
 	font-family: 'Ubuntu Mono', monospace;
 	font-size: 100%;
@@ -13,7 +17,16 @@ header {
 }
 
 main {
-	margin: 0 15px;
+	margin: 0 15px 20px;
+}
+
+a {
+	text-decoration: none;
+	color: $lightBlue; 
+}
+
+a:hover {
+	color: $hoverBlue;
 }
 
 // remove the arrows within input of type numbers
@@ -21,10 +34,29 @@ input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 }
 
+.center {
+	margin: 0 auto;
+}
+
+.textCenter {
+	text-align: center;
+}
+
 #charts {
 	width: 100%;
-	
+
 	th {
+		background-color: #000;
+		color: #fff;
+	}
+	
+	th,td {
+		padding: 5px 10px;
+	}
+	
+	tr > td:first-of-type:hover::after {
+		position: absolute;
+		content: attr(data-tooltip);
 		background-color: #000;
 		color: #fff;
 	}

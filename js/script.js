@@ -7,6 +7,8 @@ $(document).ready(function() {
 	var allData = {};	// declare empty objects to hold all data fetched
 	var filteredData = {};
 
+	var sortType = '';	// variable for sort type
+
 	//// helper functions ////
 	function fetchResults() {
 		var searchTopic = $("#searchTopic").val().trim();
@@ -81,6 +83,7 @@ $(document).ready(function() {
 
 		// call function to determine categories and values
 		var chart1Data = chart1GetData(info);
+
 		
 		// create instance of Highcharts and render to DOM
 		$("#charts").append("<div id='chart1'></div>");
@@ -167,29 +170,28 @@ $(document).ready(function() {
 		
 		$("#charts").append("<div id='table3'></div>");
 		
-		var tableHeader = "<table><thead><tr>";
-		tableHeader += "<th>Title</th>";
+		var tableHeader = "<table class='center'><thead><tr>";
+		tableHeader += "<th class='studiesTitle'>Title</th>";
 		tableHeader += "<th>URL</th>";
 		tableHeader += "<th>Conditions</th>";
 		tableHeader += "<th>Status</th>";
-		tableHeader += "<th>Score</th>";
-		tableHeader += "<th>Last Changed</th>";
-		tableHeader += "</tr></thead><tbody>";
+		tableHeader += "<th class='studiesScore'>Score</th>";
+		tableHeader += "<th class='studiesDate'>Last Changed</th>";
+		tableHeader += "</tr></thead><tbody id='tablebody'>";	
 		
 		var tableContent = "";
 		for (data in tableInfo) { 
 			tableContent += "<tr><td data-tooltip='"+tableInfo[data].title+"'>"+tableInfo[data].title.slice(0,10)+"...</td>";
-			tableContent += "<td><a target='_blank' href='"+tableInfo[data].url+"'>..."+tableInfo[data].url.slice(-11)+"</td>";
+			tableContent += "<td><a target='_blank' href='"+tableInfo[data].url+"'>"+tableInfo[data].url.slice(-11)+"</td>";
 			tableContent += "<td>"+tableInfo[data].condition_summary+"</td>";
 			tableContent += "<td>"+tableInfo[data].status+"</td>";
-			tableContent += "<td>"+tableInfo[data].score+"</td>";
+			tableContent += "<td class='textCenter'>"+tableInfo[data].score+"</td>";
 			tableContent += "<td>"+tableInfo[data].last_changed+"</td></tr>";
-		}
-		
+		}	
 		tableContent += "</tr>";
-		
-		tableFooter = "</tbody></table>";	
-		
+			
+		tableFooter = "</tbody></table>";
+
 		$("#table3").html(tableHeader+tableContent+tableFooter);
 	}
 	
@@ -250,11 +252,9 @@ $(document).ready(function() {
 					tempNames.push(bar[foo].trim());
 			}
 		}
-		
-		
+
 		tempNames.sort();
 		console.log(tempNames);
-		console.log(tempNames.length);
 		
 		var length = tempNames.length;
 		catNames.push(tempNames[0]);
@@ -265,7 +265,6 @@ $(document).ready(function() {
 		}
 		
 		console.log(catNames);
-		console.log(catNames.length);
 
 		// find all values for each categories
 		for (var i=0;i<catNames.length;i++) {
@@ -305,16 +304,91 @@ $(document).ready(function() {
 	}
 	
 	
+	//// sorting functions ////
+	// ascending title
+	function ascending(a,b) {
+		var alpha = $(a).children('td').eq(0).text();
+		var beta = $(b).children('td').eq(0).text();
+
+		if (alpha < beta)
+			return -1;
+		if (alpha > beta)
+			return 1;
+		return 0;	
+	}
+	// descending title
+	function descending(a,b) {
+		var alpha = $(a).children('td').eq(0).text();
+		var beta = $(b).children('td').eq(0).text();
+		
+		if (alpha < beta)
+			return 1;
+		if (alpha > beta)
+			return -1;
+		return 0;	
+	}	
+	// ascending numbers
+	function ascendingNum(a,b) {
+		var alpha = parseFloat($(a).children('td').eq(4).text());
+		var beta = parseFloat($(b).children('td').eq(4).text());
+		
+		if (alpha < beta)
+			return -1;
+		if (alpha > beta)
+			return 1;
+		return 0;	
+	}	
+	// descending numbers
+	function descendingNum(a,b) {
+		var alpha = parseFloat($(a).children('td').eq(4).text());
+		var beta = parseFloat($(b).children('td').eq(4).text());
+		
+		if (alpha < beta)
+			return 1;
+		if (alpha > beta)
+			return -1;
+		return 0;	
+	}
+	
 	//// event listeners ////
 	$(document).on("click", "button", function() {
 		$("#charts").empty();
 		fetchResults();
 	});
 	
-	$(document).on("click", ".highcharts-container", function() {
-		console.log('hi');
+	$(document).on("click", ".studiesTitle", function() {
+		var rows = $("#tablebody tr").get();
+
+		if (sortType == 'ascending') {
+			rows.sort(descending);
+			sortType = 'descending';
+		} else {
+			rows.sort(ascending);
+			sortType = 'ascending';
+		}
+
+		$('#tablebody').empty();
+		$.each(rows, function(index, row) {
+			$('#tablebody').append(row);
+		});
 	});
-	
+
+	$(document).on("click", ".studiesScore", function() {
+		var rows = $("#tablebody tr").get();
+		
+		if (sortType == 'ascendingNum') {
+			rows.sort(descendingNum);
+			sortType = 'descendingNum';
+		} else {
+			rows.sort(ascendingNum);
+			sortType = 'ascendingNum';
+		}
+		
+		$('#tablebody').empty();
+		$.each(rows, function(index, row) {
+			$('#tablebody').append(row);
+		});			
+	});
 });
 
 
