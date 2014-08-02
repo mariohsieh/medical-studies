@@ -14,7 +14,8 @@ header {
 main {
   margin: 0 15px 20px; }
   main section:first-of-type {
-    text-align: center; }
+    text-align: center;
+    margin-bottom: 20px; }
     main section:first-of-type div {
       text-align: left;
       display: inline-block;

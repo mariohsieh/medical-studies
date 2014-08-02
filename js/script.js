@@ -49,6 +49,7 @@ $(document).ready(function() {
 			url: url+encodeURIComponent(path),
 			error: function() {
 				console.log("Error in accessing studies.");
+				$("charts").append("<p>Sorry, an error occurred.  Please try again.</p>");
 			},
 			success: function(data) {
 				displayChart1(data);
@@ -103,33 +104,35 @@ $(document).ready(function() {
 		// call function to determine categories and values
 		var chart1Data = chart1GetData(info);
 
-		
-		// create instance of Highcharts and render to DOM
-		$("#charts").append("<div id='chart1'></div>");
-		var chart1 = new Highcharts.Chart({
-			chart: {
-				renderTo: 'chart1'
-			},
-			xAxis: {
-				categories: chart1Data[0]
-			},
-			series: [{
-				data: chart1Data[1],
-				name: 'Status'
-			}],
-			plotOptions: {
-				series: {
-					cursor: 'pointer',
-					point: {
-						events: {
-							click: function() {
-								displayChart2(this.category);	
+		if (allData.clinical_study) {
+			// create instance of Highcharts and render to DOM
+			$("#charts").append("<div id='chart1'></div>");
+			var chart1 = new Highcharts.Chart({
+				chart: {
+					renderTo: 'chart1'
+				},
+				xAxis: {
+					categories: chart1Data[0]
+				},
+				series: [{
+					data: chart1Data[1],
+					name: 'Status'
+				}],
+				plotOptions: {
+					series: {
+						cursor: 'pointer',
+						point: {
+							events: {
+								click: function() {
+									displayChart2(this.category);	
+								}
 							}
 						}
 					}
-				}
-			},			
-		});	
+				},			
+			});
+		} else
+			$("#charts").append("<p class='textCenter'>Sorry, your search didn't return any results.</p>");
 	}
 
 	// organizes chart options, creates chart and appends to the DOM for display
