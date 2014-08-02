@@ -1,8 +1,5 @@
 $(document).ready(function() {
 			
-	// declare url and path for proxy server
-	var url = "process.php?path=";
-	
 	var allData = {};	// declare empty objects to hold all data fetched
 	var filteredData = {};
 
@@ -10,31 +7,41 @@ $(document).ready(function() {
 
 	//// helper functions ////
 	function fetchResults() {
+		// declare url and path for proxy server
+		var url = "process.php?path=";		
 		var path = "ct2/results?term=&Search=Search&displayxml=true";
 		var searchTopic = $("#searchTopic").val().trim();
 		
 		// if user inputs search items
 		if (searchTopic != '') {
-			searchTopic = searchTopic.split(" ").join("+");
-			path = "ct2/results?term="+searchTopic+"&Search=Search&displayxml=true";
+			//searchTopic = searchTopic.split(" ").join("+");
+			searchTopic = searchTopic.split(" ");
+			
+			var filteredSearch = [];
+			for (topic in searchTopic) {
+				if (searchTopic[topic] != '')
+					filteredSearch.push(searchTopic[topic]);
+			}
+			
+			console.log(filteredSearch);
+			
+			// clear multiple whitespaces between words
+
+			path = "ct2/results?term="+filteredSearch.join("+")+"&Search=Search&displayxml=true";
 		}
 					
 		// if user inputs results number
-		var resultsCount = $("#resultsCount").val().trim();
-		
-		resultsCount = parseInt(resultsCount);
-		
-		if (typeof resultsCount === 'number' && resultsCount > 0) {
-		//if (resultsCount != '') {
+		var resultsCount = parseInt($("#resultsCount").val().trim());	
+		if (typeof resultsCount === 'NaN' || resultsCount < 0) {
+			resultsCount = 20;	
+		} else {
 			if (resultsCount > 100)
 				resultsCount = 100;
-		} else
-			resultsCount = 20;
+		}
 			
-		console.log(resultsCount);
+		//console.log(resultsCount);
 		resultsCount = "&count="+resultsCount.toString();
-		path += path+resultsCount;
-
+		path += resultsCount;
 		//console.log(path);
 		
 		$.ajax({

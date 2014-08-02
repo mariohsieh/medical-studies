@@ -7,21 +7,9 @@
 	$path = $_GET['path'];
 	$url = HOSTNAME.$path;
 
-	//var_dump($url);
+	//var_dump($path);
 	//die();
 
-/*	
-	$url .= "&displayxml=".$_GET['displayxml'];
-	
-	if (isset($_GET['term'])) {
-		$temp = str_replace(" ", "+", $_GET['term']);
-		$url .= "&term=".$temp;
-	}
-		
-	if (isset($_GET['count']))
-		$url .= "&count=".$_GET['count'];
-*/
-		
 	// open cURL session
 	$curl = curl_init($url);
 	
