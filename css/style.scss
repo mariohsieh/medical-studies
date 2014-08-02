@@ -115,4 +115,12 @@ button:hover {
 		background-color: #000;
 		color: #fff;
 	}
+	
+	.studiesTitle:hover::after, .studiesScore:hover::after, .studiesDate:hover::after {
+		position: absolute;
+		content: "ascending/descending";
+		background-color: rgba(249,249,249,.85);
+		color: #000;
+		padding: 3px 5px;
+	}
 }

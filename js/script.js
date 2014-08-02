@@ -2,8 +2,7 @@ $(document).ready(function() {
 			
 	// declare url and path for proxy server
 	var url = "process.php?path=";
-	var path = "ct2/results?term=&Search=Search&displayxml=true";
-
+	
 	var allData = {};	// declare empty objects to hold all data fetched
 	var filteredData = {};
 
@@ -11,6 +10,7 @@ $(document).ready(function() {
 
 	//// helper functions ////
 	function fetchResults() {
+		var path = "ct2/results?term=&Search=Search&displayxml=true";
 		var searchTopic = $("#searchTopic").val().trim();
 		
 		// if user inputs search items
@@ -21,10 +21,19 @@ $(document).ready(function() {
 					
 		// if user inputs results number
 		var resultsCount = $("#resultsCount").val().trim();
-		if (resultsCount != '') {
-			resultsCount = "&count="+resultsCount.toString();
-			path += path+resultsCount;
-		}
+		
+		resultsCount = parseInt(resultsCount);
+		
+		if (typeof resultsCount === 'number' && resultsCount > 0) {
+		//if (resultsCount != '') {
+			if (resultsCount > 100)
+				resultsCount = 100;
+		} else
+			resultsCount = 20;
+			
+		console.log(resultsCount);
+		resultsCount = "&count="+resultsCount.toString();
+		path += path+resultsCount;
 
 		//console.log(path);
 		

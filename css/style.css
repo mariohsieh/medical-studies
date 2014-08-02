@@ -80,3 +80,9 @@ button:hover {
     content: attr(data-tooltip);
     background-color: #000;
     color: #fff; }
+  #charts .studiesTitle:hover::after, #charts .studiesScore:hover::after, #charts .studiesDate:hover::after {
+    position: absolute;
+    content: "ascending/descending";
+    background-color: rgba(249, 249, 249, 0.85);
+    color: #000;
+    padding: 3px 5px; }
