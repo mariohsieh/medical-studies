@@ -2,7 +2,6 @@ $(document).ready(function() {
 			
 	var allData = {};	// declare empty objects to hold all data fetched
 	var filteredData = {};
-
 	var sortType = '';	// variable for sort type
 
 	//// helper functions ////
@@ -45,11 +44,11 @@ $(document).ready(function() {
 			url: url+encodeURIComponent(path),
 			error: function() {
 				console.log("Error in accessing studies.");
-				$("charts").append("<p>Sorry, an error occurred.  Please try again.</p>");
+				$("charts p").css("display", "block");
 			},
 			success: function(data) {
 				displayChart1(data);
-			}				
+			}
 		});
 	}
 
@@ -102,7 +101,7 @@ $(document).ready(function() {
 
 		if (allData.clinical_study) {
 			// create instance of Highcharts and render to DOM
-			$("#charts").append("<div id='chart1'></div>");
+			$("#charts p").after("<div id='chart1'></div>");
 			var chart1 = new Highcharts.Chart({
 				chart: {
 					renderTo: 'chart1'
@@ -128,13 +127,13 @@ $(document).ready(function() {
 				},			
 			});
 		} else
-			$("#charts").append("<p class='textCenter'>Sorry, your search didn't return any results.</p>");
+			$("#charts > p").css("display", "block");
 	}
 
 	// organizes chart options, creates chart and appends to the DOM for display
 	function displayChart2(str) {
-		$("#chart2").remove();
-		$("#table3").remove();
+		$("#chart2").remove();	
+		$("#table3").css("display", "none");		
 		
 		var cat = str;
 		
@@ -145,7 +144,7 @@ $(document).ready(function() {
 		console.log(chart2Data);
 
 		// create instance of Highcharts and render to DOM
-		$("#charts").append("<div id='chart2'></div>");
+		$("#chart1").after("<div id='chart2'></div>");
 		var chart2 = new Highcharts.Chart({
 			chart: {
 				renderTo: 'chart2',
@@ -180,36 +179,25 @@ $(document).ready(function() {
 
 	// outputs data for table
 	function displayTable(str) {
-		$("#table3").remove();
-		
+		$("#tablebody").empty();
 		var condition = str;
 		
 		var tableInfo = getTableData(condition);
 		console.log(tableInfo);
-		
-		$("#charts").append("<div id='table3'></div>");
-		
-		var tableHeader = "<table class='center'><thead><tr>";
-		tableHeader += "<th class='studiesTitle pointer'>Title</th>";
-		tableHeader += "<th>URL</th>";
-		tableHeader += "<th>Conditions</th>";
-		tableHeader += "<th>Status</th>";
-		tableHeader += "<th class='studiesScore pointer'>Score</th>";
-		tableHeader += "<th class='studiesDate pointer'>Last Changed</th>";
-		tableHeader += "</tr></thead><tbody id='tablebody'>";	
-		
+
 		var tableContent = "";
 		for (data in tableInfo) {
-			tableContent += "<tr><td data-tooltip='"+tableInfo[data].title+"'>"+tableInfo[data].title.slice(0,10)+"...</td>";
+			tableContent += "<tr><td class='tooltip'><span>"+tableInfo[data].title+"</span>"+tableInfo[data].title.slice(0,10)+"...</td>";
 			tableContent += "<td><a target='_blank' href='"+tableInfo[data].url+"'>"+tableInfo[data].url.slice(-11)+"</td>";
 			tableContent += "<td>"+tableInfo[data].condition_summary+"</td>";
 			tableContent += "<td>"+tableInfo[data].status+"</td>";
-			tableContent += "<td class='textCenter'>"+tableInfo[data].score+"</td>";
-			tableContent += "<td>"+tableInfo[data].last_changed+"</td></tr>";
+			tableContent += "<td class='tooltip' class='textCenter'>"+tableInfo[data].score+"</td>";
+			tableContent += "<td class='tooltip'>"+tableInfo[data].last_changed+"</td></tr>";
 		}				
-		tableFooter = "</tbody></table>";
 
-		$("#table3").html(tableHeader+tableContent+tableFooter);
+		$("#tablebody").append(tableContent);
+		$("#table3").css("display", "block");
+		
 		setTimeout(scrollDown(), 2000);
 	}
 	
@@ -445,14 +433,17 @@ $(document).ready(function() {
 	function scrollDown() {
 		var height = $(document).height();		
 		var scrollTime = .6*height;			// dynamically calculate scroll time dependent on distance to travel
-		$("html, body").animate({scrollTop: $(document).height()-$(window).height()}, scrollTime);
+		$("html, body").animate({scrollTop: height-$(window).height()}, scrollTime);
 	}
 
 	
 	//// event listeners ////
 	// search event
 	$(document).on("click", "button", function() {
-		$("#charts").empty();
+		$("#charts > p").css("display", "none");
+		$("#chart1").remove();
+		$("#chart2").remove();
+		$("#table3").css("display", "none");
 		fetchResults();
 	});
 	
@@ -464,7 +455,7 @@ $(document).ready(function() {
 		if (clicked.hasClass("studiesTitle")) {
 			if (sortType == 'ascendingTitle') {
 				rows.sort(descendingTitle);
-				sortType = 'descendingTitle';
+				sortType = '';
 			} else {
 				rows.sort(ascendingTitle);
 				sortType = 'ascendingTitle';
@@ -473,7 +464,7 @@ $(document).ready(function() {
 		if (clicked.hasClass("studiesScore")) {
 			if (sortType == 'ascendingScore') {
 				rows.sort(descendingScore);
-				sortType = 'descendingScore';
+				sortType = '';
 			} else {
 				rows.sort(ascendingScore);
 				sortType = 'ascendingScore';
@@ -482,7 +473,7 @@ $(document).ready(function() {
 		if (clicked.hasClass("studiesDate")) {
 			if (sortType == 'ascendingDate') {
 				rows.sort(descendingDate);
-				sortType = 'descendingDate';
+				sortType = '';
 			} else {
 				rows.sort(ascendingDate);
 				sortType = 'ascendingDate';
@@ -494,4 +485,28 @@ $(document).ready(function() {
 			$('#tablebody').append(row);
 		});
 	});
+	
+
+	// tooltip hover to follow mouse
+	$(document).on("mouseover", ".tooltip", function () {
+		
+		//var tooltips = document.getElementById('test');
+		var tooltip = document.querySelectorAll('.tooltip > span');
+		//var tooltip = $(this).children("span");
+		//console.log(tooltip);
+	
+
+		window.onmousemove = function(evt) {
+			var x = (evt.clientX) + "px";
+			var y = (evt.clientY -25) + "px";
+		
+			for (var i=0;i<tooltip.length;i++) {
+				tooltip[i].style.top = y;
+				tooltip[i].style.left = x;
+			}
+		}	
+
+	});
+
+	
 });

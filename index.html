@@ -12,7 +12,6 @@
 </head>
 <body>
 	<header>medical studies</header>
-	
 	<main>
 		<section> <!-- search & filter -->
 			<div>
@@ -25,9 +24,29 @@
 				<button class='pointer'>GO</button>
 			</div>				
 		</section>
-		<section id="charts">
-			<!-- display charts here -->
+		<section id="charts"> <!-- display charts here -->
+			<p class='textCenter'>Sorry, your search didn't return any results.</p>
+			<div id="chart1"></div>
+			<div id="chart2"></div>
+			<div id="table3">
+				<table class="center">
+					<thead>
+						<tr>
+							<th class='studiesTitle pointer tooltip'><span>ascending/descending</span>Title</th>
+							<th>URL</th>
+							<th>Conditions</th>
+							<th>Status</th>
+							<th class='studiesScore pointer tooltip'><span>ascending/descending</span>Score</th>
+							<th class='studiesDate pointer tooltip'><span>ascending/descending</span>Last Changed</th>
+						</tr>
+					</thead>
+					<tbody id='tablebody'>
+						<!-- content dynamically loaded -->
+					</tbody>
+				</table>
+			</div>			
 		</section>
+
 	</main>
 	<footer>
 		<!-- load js files -->
