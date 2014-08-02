@@ -14,19 +14,15 @@ $(document).ready(function() {
 		
 		// if user inputs search items
 		if (searchTopic != '') {
-			//searchTopic = searchTopic.split(" ").join("+");
 			searchTopic = searchTopic.split(" ");
 			
+			// clear excess whitespace between words
 			var filteredSearch = [];
 			for (topic in searchTopic) {
 				if (searchTopic[topic] != '')
 					filteredSearch.push(searchTopic[topic]);
 			}
 			
-			console.log(filteredSearch);
-			
-			// clear multiple whitespaces between words
-
 			path = "ct2/results?term="+filteredSearch.join("+")+"&Search=Search&displayxml=true";
 		}
 					
@@ -325,8 +321,8 @@ $(document).ready(function() {
 	
 	
 	//// sorting functions ////
-	// ascending title
-	function ascending(a,b) {
+	// sort title
+	function titleSort(a,b) {
 		var alpha = $(a).children('td').eq(0).text();
 		var beta = $(b).children('td').eq(0).text();
 
@@ -334,21 +330,17 @@ $(document).ready(function() {
 			return -1;
 		if (alpha > beta)
 			return 1;
-		return 0;	
+		return 0;		
 	}
-	// descending title
-	function descending(a,b) {
-		var alpha = $(a).children('td').eq(0).text();
-		var beta = $(b).children('td').eq(0).text();
-		
-		if (alpha < beta)
-			return 1;
-		if (alpha > beta)
-			return -1;
-		return 0;	
+	function ascendingTitle(a,b) {
+		return titleSort(a,b);
+	}
+	function descendingTitle(a,b) {
+		return titleSort(b,a);
 	}	
-	// ascending numbers
-	function ascendingNum(a,b) {
+
+	// sort numbers
+	function numSort(a,b) {
 		var alpha = parseFloat($(a).children('td').eq(4).text());
 		var beta = parseFloat($(b).children('td').eq(4).text());
 		
@@ -357,20 +349,16 @@ $(document).ready(function() {
 		if (alpha > beta)
 			return 1;
 		return 0;	
-	}	
-	// descending numbers
-	function descendingNum(a,b) {
-		var alpha = parseFloat($(a).children('td').eq(4).text());
-		var beta = parseFloat($(b).children('td').eq(4).text());
-		
-		if (alpha < beta)
-			return 1;
-		if (alpha > beta)
-			return -1;
-		return 0;	
 	}
-	
-	function ascendingDate(a,b) {	
+	function ascendingScore(a,b) {
+		return numSort(a,b);
+	}	
+	function descendingScore(a,b) {
+		return numSort(b,a);
+	}
+
+	// sort date
+	function dateSort(a,b) {
 		var alpha = ($(a).children('td').eq(5).text());
 		var beta = ($(b).children('td').eq(5).text());		
 		
@@ -380,8 +368,6 @@ $(document).ready(function() {
 		beta = beta.split(' ');
 		beta[1] = beta[1].replace(",","");
 		
-		console.log(alpha);
-		
 		// compare year
 		if (parseInt(alpha[2]) > parseInt(beta[2]))
 			return 1;
@@ -389,7 +375,6 @@ $(document).ready(function() {
 			return -1;
 		
 		// if year equal, compare month
-		//if (parseInt(alpha[2]) == parseInt(beta[2])) {
 		if (monthNum(alpha[0]) > monthNum(beta[0]))
 			return 1;
 		if (monthNum(alpha[0]) < monthNum(beta[0]))
@@ -403,42 +388,14 @@ $(document).ready(function() {
 		
 		return 0;
 	}
-
-	function descendingDate(a,b) {	
-		var alpha = ($(a).children('td').eq(5).text());
-		var beta = ($(b).children('td').eq(5).text());		
-		
-		alpha = alpha.split(' ');
-		alpha[1] = alpha[1].replace(",","");
-
-		beta = beta.split(' ');
-		beta[1] = beta[1].replace(",","");
-		
-		console.log(alpha);
-		
-		// compare year
-		if (parseInt(alpha[2]) > parseInt(beta[2]))
-			return -1;
-		if (parseInt(alpha[2]) < parseInt(beta[2]))
-			return 1;
-		
-		// if year equal, compare month
-		//if (parseInt(alpha[2]) == parseInt(beta[2])) {
-		if (monthNum(alpha[0]) > monthNum(beta[0]))
-			return -1;
-		if (monthNum(alpha[0]) < monthNum(beta[0]))
-			return 1;
-		
-		// if month equal, compare day
-		if (parseInt(alpha[1]) > parseInt(beta[1]))
-			return -1;
-		if (parseInt(alpha[1]) < parseInt(beta[1]))
-			return 1;
-		return 0;
+	function ascendingDate(a,b) {
+		return dateSort(a,b);
 	}
-
+	function descendingDate(a,b) {
+		return dateSort(b,a);
+	}	
 	
-	// get numerical value of month
+	// get numerical value of each month
 	function monthNum(str) {
 		switch(str) {
 			case "January":
@@ -488,89 +445,42 @@ $(document).ready(function() {
 		fetchResults();
 	});
 	
-	// sort by title
-	$(document).on("click", ".studiesTitle", function() {
+	// click event to sort by title, score or date
+	$(document).on("click", ".studiesTitle, .studiesScore, .studiesDate", function() {
+		var clicked = $(this);
 		var rows = $("#tablebody tr").get();
-
-		if (sortType == 'ascending') {
-			rows.sort(descending);
-			sortType = 'descending';
-		} else {
-			rows.sort(ascending);
-			sortType = 'ascending';
+		
+		if (clicked.hasClass("studiesTitle")) {
+			if (sortType == 'ascendingTitle') {
+				rows.sort(descendingTitle);
+				sortType = 'descendingTitle';
+			} else {
+				rows.sort(ascendingTitle);
+				sortType = 'ascendingTitle';
+			}
 		}
-
+		if (clicked.hasClass("studiesScore")) {
+			if (sortType == 'ascendingScore') {
+				rows.sort(descendingScore);
+				sortType = 'descendingScore';
+			} else {
+				rows.sort(ascendingScore);
+				sortType = 'ascendingScore';
+			}
+		}			
+		if (clicked.hasClass("studiesDate")) {
+			if (sortType == 'ascendingDate') {
+				rows.sort(descendingDate);
+				sortType = 'descendingDate';
+			} else {
+				rows.sort(ascendingDate);
+				sortType = 'ascendingDate';
+			}	
+		}	
+			
 		$('#tablebody').empty();
 		$.each(rows, function(index, row) {
 			$('#tablebody').append(row);
 		});
 	});
-	
-	// sort by score
-	$(document).on("click", ".studiesScore", function() {
-		var rows = $("#tablebody tr").get();
-		
-		if (sortType == 'ascendingNum') {
-			rows.sort(descendingNum);
-			sortType = 'descendingNum';
-		} else {
-			rows.sort(ascendingNum);
-			sortType = 'ascendingNum';
-		}
-		
-		$('#tablebody').empty();
-		$.each(rows, function(index, row) {
-			$('#tablebody').append(row);
-		});			
-	});
-	
-	// sort by date
-	$(document).on("click", ".studiesDate", function() {
-		var rows = $("#tablebody tr").get();
-		
-		if (sortType == 'ascendingDate') {
-			rows.sort(descendingDate);
-			sortType = 'descendingDate';
-		} else {
-			rows.sort(ascendingDate);
-			sortType = 'ascendingDate';
-		}
-
-		$('#tablebody').empty();
-		$.each(rows, function(index, row) {
-			$('#tablebody').append(row);
-		});	
-	});
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
