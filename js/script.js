@@ -71,6 +71,9 @@ $(document).ready(function() {
 			y: 0,
 			floating: false,
 			borderWidth: 1
+		},
+		exporting: {
+			enabled: true
 		}
 	});
 
@@ -171,25 +174,23 @@ $(document).ready(function() {
 		$("#charts").append("<div id='table3'></div>");
 		
 		var tableHeader = "<table class='center'><thead><tr>";
-		tableHeader += "<th class='studiesTitle'>Title</th>";
+		tableHeader += "<th class='studiesTitle pointer'>Title</th>";
 		tableHeader += "<th>URL</th>";
 		tableHeader += "<th>Conditions</th>";
 		tableHeader += "<th>Status</th>";
-		tableHeader += "<th class='studiesScore'>Score</th>";
-		tableHeader += "<th class='studiesDate'>Last Changed</th>";
+		tableHeader += "<th class='studiesScore pointer'>Score</th>";
+		tableHeader += "<th class='studiesDate pointer'>Last Changed</th>";
 		tableHeader += "</tr></thead><tbody id='tablebody'>";	
 		
 		var tableContent = "";
-		for (data in tableInfo) { 
+		for (data in tableInfo) {
 			tableContent += "<tr><td data-tooltip='"+tableInfo[data].title+"'>"+tableInfo[data].title.slice(0,10)+"...</td>";
 			tableContent += "<td><a target='_blank' href='"+tableInfo[data].url+"'>"+tableInfo[data].url.slice(-11)+"</td>";
 			tableContent += "<td>"+tableInfo[data].condition_summary+"</td>";
 			tableContent += "<td>"+tableInfo[data].status+"</td>";
 			tableContent += "<td class='textCenter'>"+tableInfo[data].score+"</td>";
 			tableContent += "<td>"+tableInfo[data].last_changed+"</td></tr>";
-		}	
-		tableContent += "</tr>";
-			
+		}				
 		tableFooter = "</tbody></table>";
 
 		$("#table3").html(tableHeader+tableContent+tableFooter);

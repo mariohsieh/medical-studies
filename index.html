@@ -15,11 +15,15 @@
 	
 	<main>
 		<section> <!-- search & filter -->
-			<p>Please input search topics</p>
-			<input id="searchTopic" type="search" placeholder="search studies" />
-			<p>Input between 0 - 100 results</p>
-			<input id="resultsCount" type="number" min="0" max="100" pattern="\d+" />
-			<button>GO!</button>
+			<div>
+				<label for='searchTopic'>Search topics</label>
+				<input id="searchTopic" type="search" />
+			</div>
+			<div>
+				<label for='resultsCount'>Results (max: 100)</label>
+				<input id="resultsCount" class="textCenter" type="number" min="0" max="100" pattern="\d+" />
+				<button class='pointer'>GO</button>
+			</div>				
 		</section>
 		<section id="charts">
 			<!-- display charts here -->
@@ -29,6 +33,7 @@
 		<!-- load js files -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
 		<script src="js/script.js"></script>
 	</footer>
 </body>
