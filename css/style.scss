@@ -9,7 +9,7 @@ html, body {
 }
 
 header {
-	background-color: #000;
+	background-color: $grey;
 	color: #fff;
 	text-align: center;
 	height: 40px;
@@ -102,7 +102,7 @@ button:hover {
 	width: 100%;
 
 	th {
-		background-color: #000;
+		background-color: $grey;
 		color: #fff;
 	}
 	
@@ -110,18 +110,28 @@ button:hover {
 		padding: 5px 10px;
 	}
 	
-	tr > td:first-of-type:hover::after {
+	tr > td:first-of-type:hover::after,
+	.studiesTitle:hover::after,
+	.studiesScore:hover::after,
+	.studiesDate:hover::after {
 		position: absolute;
-		content: attr(data-tooltip);
-		background-color: #000;
-		color: #fff;
-	}
-	
-	.studiesTitle:hover::after, .studiesScore:hover::after, .studiesDate:hover::after {
-		position: absolute;
-		content: "ascending/descending";
 		background-color: rgba(249,249,249,.85);
 		color: #000;
 		padding: 3px 5px;
+		border: 1px solid $lightBlue;
+		border-radius: 2px;
+		box-shadow: 1px 1px 3px 1px rgba(0,0,0,.4);
+		font-size: .8em;
+		z-index: 10;
+	}
+	
+	tr > td:first-of-type:hover::after, {
+		content: attr(data-tooltip);
+	}
+		
+	.studiesTitle:hover::after,
+	.studiesScore:hover::after,
+	.studiesDate:hover::after {
+		content: "ascending/descending";
 	}
 }

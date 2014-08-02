@@ -173,8 +173,9 @@ $(document).ready(function() {
 						}
 					}
 				}
-			},			
-		});			
+			}			
+		});
+		setTimeout(scrollDown(), 2000);
 	}
 
 	// outputs data for table
@@ -209,6 +210,7 @@ $(document).ready(function() {
 		tableFooter = "</tbody></table>";
 
 		$("#table3").html(tableHeader+tableContent+tableFooter);
+		setTimeout(scrollDown(), 2000);
 	}
 	
 	
@@ -275,6 +277,7 @@ $(document).ready(function() {
 		var length = tempNames.length;
 		catNames.push(tempNames[0]);
 		
+		// remove duplicate categories
 		for (var i=1;i<length;i++) {
 			if (tempNames[i-1] != tempNames[i])
 				catNames.push(tempNames[i]); 
@@ -437,6 +440,14 @@ $(document).ready(function() {
 		}
 		return str;
 	}
+
+	// scroll to bottom of screen
+	function scrollDown() {
+		var height = $(document).height();		
+		var scrollTime = .6*height;			// dynamically calculate scroll time dependent on distance to travel
+		$("html, body").animate({scrollTop: $(document).height()-$(window).height()}, scrollTime);
+	}
+
 	
 	//// event listeners ////
 	// search event

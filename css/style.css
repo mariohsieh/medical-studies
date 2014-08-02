@@ -3,7 +3,7 @@ html, body {
   font-size: 100%; }
 
 header {
-  background-color: #000;
+  background-color: #555555;
   color: #fff;
   text-align: center;
   height: 40px;
@@ -72,18 +72,26 @@ button:hover {
 #charts {
   width: 100%; }
   #charts th {
-    background-color: #000;
+    background-color: #555555;
     color: #fff; }
   #charts th, #charts td {
     padding: 5px 10px; }
-  #charts tr > td:first-of-type:hover::after {
+  #charts tr > td:first-of-type:hover::after,
+  #charts .studiesTitle:hover::after,
+  #charts .studiesScore:hover::after,
+  #charts .studiesDate:hover::after {
     position: absolute;
-    content: attr(data-tooltip);
-    background-color: #000;
-    color: #fff; }
-  #charts .studiesTitle:hover::after, #charts .studiesScore:hover::after, #charts .studiesDate:hover::after {
-    position: absolute;
-    content: "ascending/descending";
     background-color: rgba(249, 249, 249, 0.85);
     color: #000;
-    padding: 3px 5px; }
+    padding: 3px 5px;
+    border: 1px solid #7cb5ec;
+    border-radius: 2px;
+    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.4);
+    font-size: .8em;
+    z-index: 10; }
+  #charts tr > td:first-of-type:hover::after {
+    content: attr(data-tooltip); }
+  #charts .studiesTitle:hover::after,
+  #charts .studiesScore:hover::after,
+  #charts .studiesDate:hover::after {
+    content: "ascending/descending"; }
