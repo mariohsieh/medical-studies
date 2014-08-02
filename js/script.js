@@ -351,12 +351,125 @@ $(document).ready(function() {
 		return 0;	
 	}
 	
+	function ascendingDate(a,b) {	
+		var alpha = ($(a).children('td').eq(5).text());
+		var beta = ($(b).children('td').eq(5).text());		
+		
+		alpha = alpha.split(' ');
+		alpha[1] = alpha[1].replace(",","");
+
+		beta = beta.split(' ');
+		beta[1] = beta[1].replace(",","");
+		
+		console.log(alpha);
+		
+		// compare year
+		if (parseInt(alpha[2]) > parseInt(beta[2]))
+			return 1;
+		if (parseInt(alpha[2]) < parseInt(beta[2]))
+			return -1;
+		
+		// if year equal, compare month
+		//if (parseInt(alpha[2]) == parseInt(beta[2])) {
+		if (monthNum(alpha[0]) > monthNum(beta[0]))
+			return 1;
+		if (monthNum(alpha[0]) < monthNum(beta[0]))
+			return -1;
+		
+		// if month equal, compare day
+		if (parseInt(alpha[1]) > parseInt(beta[1]))
+			return 1;
+		if (parseInt(alpha[1]) < parseInt(beta[1]))
+			return -1;
+		
+		return 0;
+	}
+
+	function descendingDate(a,b) {	
+		var alpha = ($(a).children('td').eq(5).text());
+		var beta = ($(b).children('td').eq(5).text());		
+		
+		alpha = alpha.split(' ');
+		alpha[1] = alpha[1].replace(",","");
+
+		beta = beta.split(' ');
+		beta[1] = beta[1].replace(",","");
+		
+		console.log(alpha);
+		
+		// compare year
+		if (parseInt(alpha[2]) > parseInt(beta[2]))
+			return -1;
+		if (parseInt(alpha[2]) < parseInt(beta[2]))
+			return 1;
+		
+		// if year equal, compare month
+		//if (parseInt(alpha[2]) == parseInt(beta[2])) {
+		if (monthNum(alpha[0]) > monthNum(beta[0]))
+			return -1;
+		if (monthNum(alpha[0]) < monthNum(beta[0]))
+			return 1;
+		
+		// if month equal, compare day
+		if (parseInt(alpha[1]) > parseInt(beta[1]))
+			return -1;
+		if (parseInt(alpha[1]) < parseInt(beta[1]))
+			return 1;
+		return 0;
+	}
+
+	
+	// get numerical value of month
+	function monthNum(str) {
+		switch(str) {
+			case "January":
+				str = 1;
+				break;
+			case "February":
+				str = 2;
+				break;
+			case "March":
+				str = 3;
+				break;		
+			case "April":
+				str = 4;
+				break;
+			case "May":
+				str = 5;
+				break;
+			case "June":
+				str = 6;
+				break;
+			case "July":
+				str = 7;
+				break;
+			case "August":
+				str = 8;
+				break;
+			case "September":
+				str = 9;
+				break;
+			case "October":
+				str = 10;
+				break;
+			case "November":
+				str = 11;
+				break;
+			case "December":
+				str = 12;
+				break;
+		}
+		return str;
+	}
+	
 	//// event listeners ////
+	// search event
 	$(document).on("click", "button", function() {
 		$("#charts").empty();
 		fetchResults();
 	});
 	
+	// sort by title
 	$(document).on("click", ".studiesTitle", function() {
 		var rows = $("#tablebody tr").get();
 
@@ -373,7 +486,8 @@ $(document).ready(function() {
 			$('#tablebody').append(row);
 		});
 	});
-
+	
+	// sort by score
 	$(document).on("click", ".studiesScore", function() {
 		var rows = $("#tablebody tr").get();
 		
@@ -389,6 +503,24 @@ $(document).ready(function() {
 		$.each(rows, function(index, row) {
 			$('#tablebody').append(row);
 		});			
+	});
+	
+	// sort by date
+	$(document).on("click", ".studiesDate", function() {
+		var rows = $("#tablebody tr").get();
+		
+		if (sortType == 'ascendingDate') {
+			rows.sort(descendingDate);
+			sortType = 'descendingDate';
+		} else {
+			rows.sort(ascendingDate);
+			sortType = 'ascendingDate';
+		}
+
+		$('#tablebody').empty();
+		$.each(rows, function(index, row) {
+			$('#tablebody').append(row);
+		});	
 	});
 });
 
